@@ -101,7 +101,12 @@ class IotApi(mixin.Mixin):
 
         return resp
 
-    def _get_all(self, func, key, **kwargs):
+    def _get_all(self, func, keys, **kwargs):
+        def _get(x, keys):
+            if not keys:
+                return x
+            return _get(x[keys[0]], keys[1:])
+
         offset = 0
         pagelength = 1000
 
@@ -113,11 +118,12 @@ class IotApi(mixin.Mixin):
             if resp.status_code == 200:
                 obj = resp.json()
                 try:
-                    length = len(obj[key])
-                    for x in obj[key]:
-                        yield x
+                    obj = _get(obj, keys)
                 except KeyError as e:
                     raise ApiError('Malformed response, missing key %s' % e)
+                length = len(obj)
+                for x in obj:
+                    yield x
             else:
                 resp.raise_for_status()
 
@@ -138,7 +144,7 @@ class IotApi(mixin.Mixin):
         }
 
         for x in self._get_all(func=self.device,
-                               key='devices',
+                               keys=['devices'],
                                **kwargs):
             yield x
 
@@ -178,6 +184,7 @@ class IotApi(mixin.Mixin):
         return resp
 
     def vulnerability(self, *,
+                      groupby=None,
                       stime=None,
                       deviceid=None,
                       offset=None,
@@ -188,13 +195,14 @@ class IotApi(mixin.Mixin):
         url = self.url + path
 
         params = {'customerid': self.customerid}
+        if groupby is None:
+            params['groupby'] = 'vulnerability'
+        else:
+            params['groupby'] = groupby
         if stime is not None:
             params['stime'] = stime
         if deviceid is not None:
             params['deviceid'] = deviceid
-            params['groupby'] = 'vulnerability'
-        else:
-            params['groupby'] = 'device'
         if offset is not None:
             params['offset'] = offset
         if pagelength is not None:
@@ -215,15 +223,20 @@ class IotApi(mixin.Mixin):
         return resp
 
     def vulnerabilities_all(self, *,
+                            groupby=None,
                             stime=None,
                             query_string=None):
         kwargs = {
+            'groupby': groupby,
             'stime': stime,
             'query_string': query_string,
         }
+        keys = ['items']
+        if groupby is None or groupby == 'vulnerability':
+            keys.append('items')
 
         for x in self._get_all(func=self.vulnerability,
-                               key='items',
+                               keys=keys,
                                **kwargs):
             yield x
 
@@ -262,7 +275,7 @@ class IotApi(mixin.Mixin):
         }
 
         for x in self._get_all(func=self.alert,
-                               key='items',
+                               keys=['items'],
                                **kwargs):
             yield x
 

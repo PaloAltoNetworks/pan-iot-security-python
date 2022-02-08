@@ -100,7 +100,7 @@ DESCRIPTION
 
  IotApi methods are implemented as both functions, and coroutines for
  use with the
- `asyncio library <https://docs.python.org/3/library/asyncio.html>`_
+ `asyncio library <https://docs.python.org/3/library/asyncio.html>`_.
  The class constructor will determine if there is a running
  event loop, and return a class implemented with or without coroutine
  methods.  The
@@ -156,7 +156,7 @@ class paniot.iotapi.IotApi(\*, api_version=None, url=None, access_key_id=None, a
   downloaded when the API key is created.
 
  **customerid**
-  IoT customer ID (also known as tenant ID). 
+  IoT customer ID (also known as tenant ID).
 
  **verify**
   Specify if SSL server certificate verification is performed.
@@ -219,7 +219,7 @@ paniot.iotapi.IotApi Method Return Value
   `requests library <https://docs.python-requests.org/>`_
   and return a
   `Response object <https://docs.python-requests.org/en/latest/api/#requests.Response>`_.
- 
+
 paniot.iotapi.IotApi Methods
 ----------------------------
 
@@ -307,11 +307,31 @@ device_details(\*, deviceid=None, ip=None, query_string=None, retry=False)
  and `device details by IP address
  <https://docs.paloaltonetworks.com/iot/iot-security-api-reference/iot-security-api/get-device-details-per-ip-address.html>`__.
 
-vulnerability(\*, stime=None, deviceid=None, offset=None, pagelength=None, query_string=None, retry=False)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+vulnerability(\*, groupby=None, stime=None, deviceid=None, offset=None, pagelength=None, query_string=None, retry=False)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The ``vulnerability()`` method performs the ``/vulnerability/list`` API
  request to get device vulnerabilities.
+
+ **groupby**
+  A string which specifies how to group the device vulnerabilities
+  in the query results:
+
+   **vulnerability** (default)
+    Group results by vulnerability.  Each vulnerability and the device
+    IDs (one or more) identified as vulnerable is an item in the items
+    list.
+
+   **device**
+    Group results by device ID.  Each device ID and a single
+    vulnerability (a vulnerability instance) is an item in the items
+    list.
+
+  Each **groupby** option uses a different JSON object structure
+  in the response.
+  The items list in the **vulnerability** object is
+  ``response['items']['items']`` and in the **device** object is
+  ``response['items']``.
 
  **stime**
   Start last activity time for devices to get as a limited form of an
@@ -350,8 +370,8 @@ vulnerability(\*, stime=None, deviceid=None, offset=None, pagelength=None, query
  <https://docs.paloaltonetworks.com/iot/iot-security-api-reference/iot-security-api/get-vulnerability-instances.html>`__
  for the request.
 
-vulnerabilities_all(\*, stime=None, query_string=None)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+vulnerabilities_all(\*, groupby=None, stime=None, query_string=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The ``vulnerabilities_all()`` method is a generator function which
  executes the ``vulnerability()`` method with a page length of 1000

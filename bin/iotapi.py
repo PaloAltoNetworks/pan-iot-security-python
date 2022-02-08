@@ -138,6 +138,7 @@ def request(api, options):
             kwargs['deviceid'] = options['ip']
 
         resp = api.vulnerability(
+            groupby=options['groupby'],
             stime=options['stime'],
             offset=options['offset'],
             pagelength=options['pagelength'],
@@ -149,6 +150,7 @@ def request(api, options):
 
     elif options['vulns']:
         kwargs = {
+            'groupby': options['groupby'],
             'stime': options['stime'],
             'query_string': options['query_string_obj'],
         }
@@ -246,6 +248,7 @@ async def aiorequest(api, options):
             kwargs['deviceid'] = options['ip']
 
         resp = await api.vulnerability(
+            groupby=options['groupby'],
             stime=options['stime'],
             offset=options['offset'],
             pagelength=options['pagelength'],
@@ -257,6 +260,7 @@ async def aiorequest(api, options):
 
     elif options['vulns']:
         kwargs = {
+            'groupby': options['groupby'],
             'stime': options['stime'],
             'query_string': options['query_string_obj'],
         }
@@ -479,6 +483,7 @@ def parse_opts():
         'deviceid': None,
         'ip': None,
         'vuln': False,
+        'groupby': None,
         'vulns': False,
         'alert': False,
         'alerts': False,
@@ -509,7 +514,7 @@ def parse_opts():
         'access-key-id=', 'access-key=', 'customerid=',
         'device', 'devices', 'detail', 'stime=',
         'deviceid=', 'ip=',
-        'vuln', 'vulns',
+        'vuln', 'groupby=', 'vulns',
         'alert', 'alerts',
         'tag',
         'offset=', 'pagelength=',
@@ -562,6 +567,8 @@ def parse_opts():
             options['ip'] = arg
         elif opt == '--vuln':
             options['vuln'] = True
+        elif opt == '--groupby':
+            options['groupby'] = arg
         elif opt == '--vulns':
             options['vulns'] = True
         elif opt == '--alert':
@@ -697,6 +704,8 @@ def usage():
     --deviceid id            get device by device ID
     --ip ip                  get device by IP address
     --vuln                   get vulnerability API request
+    --groupby group          groupby parameter for vulnerability request:
+                             vulnerability|device (default: vulnerability)
     --vulns                  get all vulnerabilities
     --alert                  get security alert API request
     --alerts                 get all security alerts
