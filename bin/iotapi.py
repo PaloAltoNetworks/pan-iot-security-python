@@ -159,6 +159,7 @@ def request(api, options):
 
     elif options['alert']:
         resp = api.alert(
+            stime=options['stime'],
             offset=options['offset'],
             pagelength=options['pagelength'],
             query_string=options['query_string_obj'])
@@ -168,6 +169,7 @@ def request(api, options):
 
     elif options['alerts']:
         kwargs = {
+            'stime': options['stime'],
             'query_string': options['query_string_obj'],
         }
 
@@ -269,6 +271,7 @@ async def aiorequest(api, options):
 
     elif options['alert']:
         resp = await api.alert(
+            stime=options['stime'],
             offset=options['offset'],
             pagelength=options['pagelength'],
             query_string=options['query_string_obj'])
@@ -278,6 +281,7 @@ async def aiorequest(api, options):
 
     elif options['alerts']:
         kwargs = {
+            'stime': options['stime'],
             'query_string': options['query_string_obj'],
         }
 
@@ -698,7 +702,7 @@ def usage():
     --device                 get device inventory or details API request
     --devices                get all device inventory
     --detail                 detail=true for device inventory request
-    --stime time             last activity start time
+    --stime time             start time
                              -time for relative to now
                              -seconds or -num{s|m|h|d|w}
     --deviceid id            get device by device ID

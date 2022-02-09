@@ -334,7 +334,7 @@ vulnerability(\*, groupby=None, stime=None, deviceid=None, offset=None, pageleng
   ``response['items']``.
 
  **stime**
-  Start last activity time for devices to get as a limited form of an
+  Start time for vulnerabilities to get as a limited form of an
   ISO 8601 timestamp.  The form is ``strftime('%Y-%m-%dT%H:%M:%SZ')``
   (e.g., **2022-01-19T00:31:47Z**).
 
@@ -378,11 +378,16 @@ vulnerabilities_all(\*, groupby=None, stime=None, query_string=None)
  and with retry enabled until all items are returned; each entry in
  the response ``items`` list is yielded.
 
-alert(\*, offset=None, pagelength=None, query_string=None, retry=False)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+alert(\*, stime=None, offset=None, pagelength=None, query_string=None, retry=False)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The ``alert()`` method performs the ``/alert/list`` API request to get
  security alerts.
+
+ **stime**
+  Start time for alerts to get as a limited form of an
+  ISO 8601 timestamp.  The form is ``strftime('%Y-%m-%dT%H:%M:%SZ')``
+  (e.g., **2022-01-19T00:31:47Z**).
 
  **offset**
   Numeric offset used for response paging.  The default offset is 0.
@@ -410,8 +415,8 @@ alert(\*, offset=None, pagelength=None, query_string=None, retry=False)
  <https://docs.paloaltonetworks.com/iot/iot-security-api-reference/iot-security-api/get-security-alerts.html>`__
  for the request.
 
-alerts_all(\*, query_string=None)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+alerts_all(\*, stime=None, query_string=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The ``alerts_all()`` method is a generator function which executes
  the ``alert()`` method with a page length of 1000 and with retry

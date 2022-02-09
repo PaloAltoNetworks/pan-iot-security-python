@@ -250,6 +250,7 @@ class IotApi(mixin.AioMixin):
             yield x
 
     async def alert(self, *,
+                    stime=None,
                     offset=None,
                     pagelength=None,
                     query_string=None,
@@ -258,6 +259,8 @@ class IotApi(mixin.AioMixin):
         url = self.url + path
 
         params = {'customerid': self.customerid}
+        if stime is not None:
+            params['stime'] = stime
         if offset is not None:
             params['offset'] = offset
         if pagelength is not None:
@@ -279,8 +282,10 @@ class IotApi(mixin.AioMixin):
         return resp
 
     async def alerts_all(self, *,
+                         stime=None,
                          query_string=None):
         kwargs = {
+            'stime': stime,
             'query_string': query_string,
         }
 
