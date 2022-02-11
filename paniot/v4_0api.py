@@ -294,6 +294,8 @@ class IotApi(mixin.Mixin):
             'customerid': self.customerid,
             'source': 'tenant',
         }
+        if query_string is not None:
+            params.update(query_string)
 
         kwargs = {
             'url': url,
