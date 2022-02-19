@@ -25,6 +25,11 @@ import logging
 import os
 import pprint
 import sys
+try:
+    import jmespath
+    have_jmespath = True
+except ImportError:
+    have_jmespath = False
 
 libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir)]
@@ -394,6 +399,14 @@ async def aioprint_response(options, resp):
 
 
 def print_json_response(options, x):
+    if options['jmespath'] is not None:
+        try:
+            x = jmespath.search(options['jmespath'], x)
+        except jmespath.exceptions.JMESPathError as e:
+            print('JMESPath %s: %s' % (e.__class__.__name__, e),
+                  file=sys.stderr)
+            sys.exit(1)
+
     if options['print_python']:
         print(pprint.pformat(x))
 
@@ -506,12 +519,13 @@ def parse_opts():
         'aio': True,
         'print_json': False,
         'print_python': False,
+        'jmespath': None,
         'timeout': None,
         'debug': 0,
         'dtime': False,
         }
 
-    short_options = 'F:jpQ:R:'
+    short_options = 'F:J:jpQ:R:'
     long_options = [
         'help', 'version', 'debug=', 'dtime',
         'api-version=', 'url=',
@@ -615,6 +629,12 @@ def parse_opts():
             options['print_json'] = True
         elif opt == '-p':
             options['print_python'] = True
+        elif opt == '-J':
+            if not have_jmespath:
+                print('Install JMESPath for -J support: http://jmespath.org/',
+                      file=sys.stderr)
+                sys.exit(1)
+            options['jmespath'] = arg
         elif opt == '--debug':
             try:
                 options['debug'] = int(arg)
@@ -728,6 +748,7 @@ def usage():
     --api-version version    IoT API version (default %s)
     -j                       print JSON
     -p                       print Python
+    -J expression            JMESPath expression for JSON response data
     --timeout timeout        connect, read timeout
     -F path                  JSON options (multiple -F's allowed)
     --debug level            debug level (0-3)
