@@ -131,7 +131,7 @@ class paniot.iotapi.IotApi(\*, api_version=None, url=None, access_key_id=None, a
  **api_version**
   API version is a string in the form v\ **major**.\ **minor** or
   **major**.\ **minor** (e.g., *v4.0*).  The API version is used to determine
-  the IoTApi class implementation to use.
+  the IotApi class implementation to use.
 
   The default API version is **DEFAULT_API_VERSION**.
 
@@ -553,6 +553,26 @@ alert_update(\*, id=None, json=None, query_string=None, retry=False)
  `API documentation
  <https://docs.paloaltonetworks.com/iot/iot-security-api-reference/iot-security-api/resolve-security-alert.html>`__
  for the request.
+
+decode_jwt()
+~~~~~~~~~~~~
+
+ The ``decode_jwt()`` method decodes the access key, which is a
+ `JSON Web Token (JWT)
+ <https://www.rfc-editor.org/rfc/rfc7519.html>`_.
+ The JWT is a
+ `JSON Web Signature (JWS)
+ <https://www.rfc-editor.org/rfc/rfc7515.html>`_.
+
+ The JWS is a base64url encoded structure containing the following
+ values:
+
+ - header
+ - payload
+ - signature
+
+ The method returns a tuple containing the header and payload JSON
+ objects as Python objects.
 
 paniot.iotapi.ApiVersion class Attributes and Methods
 -----------------------------------------------------

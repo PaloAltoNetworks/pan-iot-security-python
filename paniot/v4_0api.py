@@ -52,6 +52,7 @@ class IotApi(mixin.Mixin):
         else:
             self.url = url
         auth = self._auth(access_key_id, access_key)
+        self.jwt = access_key
         self.session = self._session(auth=auth,
                                      verify=verify,
                                      timeout=timeout)

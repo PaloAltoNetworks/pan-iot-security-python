@@ -58,6 +58,7 @@ class IotApi(mixin.AioMixin):
         self._log(DEBUG2, 'ssl: %s %s', self.ssl.verify_mode,
                   self.ssl.check_hostname)
         auth = self._auth(access_key_id, access_key)
+        self.jwt = access_key
         timeout_ = self._timeout(timeout)
         self._log(DEBUG2, 'timeout: %s', timeout_)
         self.session = self._session(auth=auth, timeout=timeout_)

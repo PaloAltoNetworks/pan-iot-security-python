@@ -15,6 +15,8 @@
 #
 
 import aiohttp
+import base64
+import json
 import logging
 import requests
 import requests.adapters
@@ -34,6 +36,28 @@ class _MixinShared:
             'X-Key-Id': access_key_id,
             'X-Access-Key': access_key,
         }
+
+    def decode_jwt(self):
+        def _pad(x):
+            remainder = len(x) % 4
+            if remainder > 0:
+                x += b'=' * (4 - remainder)
+            return x
+
+        try:
+            jwt = self.jwt.encode().split(b'.')
+            if len(jwt) != 3:
+                raise ArgsError('token is not a JSON Web Signature')
+            x = base64.urlsafe_b64decode(_pad(jwt[0]))
+            header = json.loads(x)
+            if 'typ' not in header or header['typ'] != 'JWT':
+                raise ArgsError('token is not a JSON Web Token')
+            x = base64.urlsafe_b64decode(_pad(jwt[1]))
+            payload = json.loads(x)
+        except (base64.binascii.Error, ValueError) as e:
+            raise ArgsError(e)
+
+        return header, payload
 
 
 class AioMixin(_MixinShared):

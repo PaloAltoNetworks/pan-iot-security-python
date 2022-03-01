@@ -35,7 +35,7 @@ libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir)]
 
 
-from paniot import (IotApi, DEBUG1, DEBUG2, DEBUG3,
+from paniot import (IotApi, ArgsError, DEBUG1, DEBUG2, DEBUG3,
                     DEFAULT_API_VERSION, __version__)
 
 INDENT = 4
@@ -101,6 +101,10 @@ async def aioapi_request(kwargs, options):
 
 
 def request(api, options):
+    if options['print_jwt']:
+        print_jwt(api)
+        sys.exit(0)
+
     if options['device']:
         if options['deviceid'] is not None or options['ip'] is not None:
             resp = api.device_details(
@@ -213,6 +217,10 @@ def request(api, options):
 
 
 async def aiorequest(api, options):
+    if options['print_jwt']:
+        print_jwt(api)
+        sys.exit(0)
+
     if options['device']:
         if options['deviceid'] is not None or options['ip'] is not None:
             resp = await api.device_details(
@@ -362,6 +370,18 @@ async def aiowrap_obj(options, func, **kwargs):
         if options['print_json']:
             json.dump(obj, sys.stdout, sort_keys=True, indent=INDENT)
             print()
+
+
+def print_jwt(api):
+    try:
+        header, payload = api.decode_jwt()
+    except ArgsError as e:
+        print('JWT error:', e, file=sys.stderr)
+        sys.exit(1)
+
+    print(json.dumps(header, sort_keys=True, indent=INDENT))
+    print(json.dumps(payload, sort_keys=True, indent=INDENT))
+    sys.exit(0)
 
 
 def print_status(name, resp):
@@ -519,6 +539,7 @@ def parse_opts():
         'aio': True,
         'print_json': False,
         'print_python': False,
+        'print_jwt': False,
         'jmespath': None,
         'timeout': None,
         'debug': 0,
@@ -539,7 +560,7 @@ def parse_opts():
         'device-update', 'vuln-update', 'alert-update',
         'id=',
         'verify=', 'aio', 'noaio',
-        'timeout=',
+        'jwt', 'timeout=',
     ]
 
     try:
@@ -635,6 +656,8 @@ def parse_opts():
                       file=sys.stderr)
                 sys.exit(1)
             options['jmespath'] = arg
+        elif opt == '--jwt':
+            options['print_jwt'] = True
         elif opt == '--debug':
             try:
                 options['debug'] = int(arg)
@@ -749,6 +772,7 @@ def usage():
     -j                       print JSON
     -p                       print Python
     -J expression            JMESPath expression for JSON response data
+    --jwt                    print header, payload from JWT (access key)
     --timeout timeout        connect, read timeout
     -F path                  JSON options (multiple -F's allowed)
     --debug level            debug level (0-3)
