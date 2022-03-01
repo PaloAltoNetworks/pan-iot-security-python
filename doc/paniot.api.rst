@@ -346,10 +346,12 @@ vulnerability(\*, groupby=None, stime=None, deviceid=None, offset=None, pageleng
 
  **offset**
   Numeric offset used for response paging.  The default offset is 0.
+  **offset** is ignored when **groupby** is **vulnerability**.
 
  **pagelength**
   Numeric number of items to return in a response.  The default
   page length is 1000.
+  **pagelength** is ignored when **groupby** is **vulnerability**.
 
  **query_string**
   Dictionary of key/value pairs to be sent as additional parameters in
