@@ -345,11 +345,7 @@ def wrap_obj(options, func, **kwargs):
         else:
             print_json_response(options, x)
     if wrap:
-        if options['print_python']:
-            pprint.pprint(obj, sys.stdout)
-        if options['print_json']:
-            json.dump(obj, sys.stdout, sort_keys=True, indent=INDENT)
-            print()
+        print_json_response(options, obj)
 
 
 async def aiowrap_obj(options, func, **kwargs):
@@ -365,11 +361,7 @@ async def aiowrap_obj(options, func, **kwargs):
         else:
             print_json_response(options, x)
     if wrap:
-        if options['print_python']:
-            pprint.pprint(obj, sys.stdout)
-        if options['print_json']:
-            json.dump(obj, sys.stdout, sort_keys=True, indent=INDENT)
-            print()
+        print_json_response(options, obj)
 
 
 def print_jwt(api):
