@@ -1,6 +1,6 @@
 RST2HTML = rst2html
 OPTIONS =
-SOURCE = paniot.api.html
+SOURCE = paniot.api.html paniot.html
 
 .SUFFIXES: .rst .html
 .rst.html:
