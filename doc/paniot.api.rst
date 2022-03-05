@@ -143,7 +143,7 @@ class paniot.iotapi.IotApi(\*, api_version=None, url=None, access_key_id=None, a
   the IoT tenant specific domain name.  For example:
   "\https://acmecorp.iot.paloaltonetworks.com".
 
-  The default is "\https://{customerid}.iot.paloaltonetworks.com".
+  The default is "\https://*customerid*.iot.paloaltonetworks.com".
 
  **access_key_id**
   ``X-Key-Id`` request header value used in API requests.  This is the
@@ -161,6 +161,13 @@ class paniot.iotapi.IotApi(\*, api_version=None, url=None, access_key_id=None, a
  **verify**
   Specify if SSL server certificate verification is performed.
 
+  **verify** can be:
+
+   a boolean
+
+   a path to a file containing CA certificates to be used for SSL
+   server certificate verification
+
   The default is to verify the server certificate.
 
  **timeout**
@@ -175,7 +182,7 @@ class paniot.iotapi.IotApi(\*, api_version=None, url=None, access_key_id=None, a
    different values (aiohttp and requests)
 
   The
-  `asyncio library timeout <https://docs.aiohttp.org/en/stable/client_quickstart.html#timeouts>`_
+  `aiohttp library timeout <https://docs.aiohttp.org/en/stable/client_quickstart.html#timeouts>`_
   defaults to a total timeout of 300 seconds, meaning the operation
   must complete within 5 minutes.
 

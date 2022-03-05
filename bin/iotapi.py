@@ -737,7 +737,7 @@ def usage():
     --device                 get device inventory or details API request
     --devices                get all device inventory
     --detail                 detail=true for device inventory request
-    --stime time             start time
+    --stime time             start last activity time
                              -time for relative to now
                              -seconds or -num{s|m|h|d|w}
     --deviceid id            get device by device ID
