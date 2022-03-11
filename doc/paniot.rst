@@ -129,7 +129,7 @@ DESCRIPTION
   IoT Security inventory.
 
  ``--devices``
-  Get all devices in the IoT Security inventory.  This uses the IotAPI
+  Get all devices in the IoT Security inventory.  This uses the IotApi
   ``devices_all()`` method which performs the ``/device/list`` API
   request until all items are returned.
 
@@ -199,7 +199,7 @@ DESCRIPTION
     list.
 
  ``--vulns``
-  Get all vulnerabilities.  This uses the IotAPI
+  Get all vulnerabilities.  This uses the IotApi
   ``vulnerabilities_all()`` method which performs the
   ``/vulnerability/list`` API request until all items are returned.
 
@@ -210,7 +210,7 @@ DESCRIPTION
   Perform the ``/alert/list`` API request to get security alerts.
 
  ``--alerts``
-  Get all alerts.  This uses the IotAPI ``alerts_all()`` method which
+  Get all alerts.  This uses the IotApi ``alerts_all()`` method which
   performs the ``/alert/list`` API request until all items are
   returned.
 

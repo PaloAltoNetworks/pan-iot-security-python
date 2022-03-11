@@ -71,19 +71,19 @@ DESCRIPTION
 
  IotApi provides an interface to the following IoT Security API requests:
 
- ===============================   =====================   ================================
- Request                           IotApi Method           API Resource Path
- ===============================   =====================   ================================
- Get device inventory              device()                /pub/v4.0/device/list
- Get device details by device ID   device_details()        /pub/v4.0/device
- Get device details by IP          device_details()        /pub/v4.0/device/ip
- Get vulnerabilities               vulnerability()         /pub/v4.0/vulnerability/list
- Get security alerts               alert()                 /pub/v4.0/alert/list
- Get tags                          tag()                   /pub/v4.0/tag/list
- Update device tags                device_update()         /pub/v4.0/device/update
- Update vulnerability              vuln_update()           /pub/v4.0/vulnerability/update
- Update alert                      alert_update()          /pub/v4.0/alert/update
- ===============================   =====================   ================================
+ ================================   =====================   ================================
+ Request                            IotApi Method           API Resource Path
+ ================================   =====================   ================================
+ Get device inventory               device()                /pub/v4.0/device/list
+ Get device details by device ID    device_details()        /pub/v4.0/device
+ Get device details by IP address   device_details()        /pub/v4.0/device/ip
+ Get vulnerabilities                vulnerability()         /pub/v4.0/vulnerability/list
+ Get security alerts                alert()                 /pub/v4.0/alert/list
+ Get tags                           tag()                   /pub/v4.0/tag/list
+ Update device tags                 device_update()         /pub/v4.0/device/update
+ Update vulnerability               vuln_update()           /pub/v4.0/vulnerability/update
+ Update alert                       alert_update()          /pub/v4.0/alert/update
+ ================================   =====================   ================================
 
  Convenience methods implemented as generator functions are provided,
  which can be used to process all items when response paging can
