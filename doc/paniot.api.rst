@@ -583,6 +583,35 @@ decode_jwt()
  The method returns a tuple containing the header and payload JSON
  objects as Python objects.
 
+paniot.iotapi.IotApi Method Attributes
+--------------------------------------
+
+ Methods that perform an API request store the API request rate limit
+ and rate time window in method attributes:
+
+ =================   ===========
+ Attribute           Description
+ =================   ===========
+ window              time window in seconds
+ rate_limit          maximum requests in time window
+ =================   ===========
+
+ The methods that store rate limit attributes are:
+
+ - device()
+ - device_details()
+ - vulnerability()
+ - alert()
+ - tag()
+ - device_update()
+ - vuln_update()
+ - alert_update()
+
+ These attributes are used to determine the time to suspend execution
+ when **retry** is used and a HTTP 429 status code is returned.  They
+ are made available as method attributes for use in custom retry
+ strategies.
+
 paniot.iotapi.ApiVersion class Attributes and Methods
 -----------------------------------------------------
 

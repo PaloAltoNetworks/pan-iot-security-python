@@ -56,15 +56,40 @@ class IotApi(mixin.Mixin):
         self.session = self._session(auth=auth,
                                      verify=verify,
                                      timeout=timeout)
+        self._method_attributes()
 
-    def _request_retry(self, retry, delay, func, **kwargs):
+    def _request_retry(self, *,
+                       retry=False,
+                       method=None,
+                       retry_timeout=False,
+                       func=None,
+                       **kwargs):
+        if retry:
+            assert method is not None, 'method required when retry'
+            rate_limit_delay = method.window / method.rate_limit
+        if retry_timeout:
+            timeout_delay = 5
+            timeout_retries = 3
+
         while True:
-            resp = func(**kwargs)
-            if retry and resp.status_code == 429:
-                self._log(DEBUG2, 'status code 429, sleep %.2fs', delay)
-                time.sleep(delay)
+            try:
+                resp = func(**kwargs)
+            except requests.Timeout:
+                if not (retry_timeout and timeout_retries):
+                    raise
+                self._log(DEBUG2, 'timeout, sleep %.2fs', timeout_delay)
+                time.sleep(timeout_delay)
+                timeout_delay *= 2
+                timeout_retries -= 1
             else:
-                break
+                if retry and resp.status_code == 429:
+                    self._log(DEBUG2, 'status code 429, sleep %.2fs',
+                              rate_limit_delay)
+                    time.sleep(rate_limit_delay)
+                    if rate_limit_delay < method.window / 4:
+                        rate_limit_delay *= 2
+                else:
+                    break
 
         return resp
 
@@ -95,10 +120,10 @@ class IotApi(mixin.Mixin):
             'params': params,
         }
 
-        # rate limit: 60 requests per minute
-        seconds = 60/60
-        resp = self._request_retry(retry, seconds,
-                                   self.session.get, **kwargs)
+        resp = self._request_retry(retry=retry,
+                                   method=self.device,
+                                   func=self.session.get,
+                                   **kwargs)
 
         return resp
 
@@ -177,10 +202,10 @@ class IotApi(mixin.Mixin):
 
         kwargs['url'] = url
 
-        # rate limit: 600 requests per minute
-        seconds = 60/600
-        resp = self._request_retry(retry, seconds,
-                                   self.session.get, **kwargs)
+        resp = self._request_retry(retry=retry,
+                                   method=self.device_details,
+                                   func=self.session.get,
+                                   **kwargs)
 
         return resp
 
@@ -216,10 +241,10 @@ class IotApi(mixin.Mixin):
             'params': params,
         }
 
-        # rate limit: 180 requests per minute
-        seconds = 60/180
-        resp = self._request_retry(retry, seconds,
-                                   self.session.get, **kwargs)
+        resp = self._request_retry(retry=retry,
+                                   method=self.vulnerability,
+                                   func=self.session.get,
+                                   **kwargs)
 
         return resp
 
@@ -265,10 +290,10 @@ class IotApi(mixin.Mixin):
             'params': params,
         }
 
-        # rate limit: 180 requests per minute
-        seconds = 60/180
-        resp = self._request_retry(retry, seconds,
-                                   self.session.get, **kwargs)
+        resp = self._request_retry(retry=retry,
+                                   method=self.alert,
+                                   func=self.session.get,
+                                   **kwargs)
 
         return resp
 
@@ -303,10 +328,10 @@ class IotApi(mixin.Mixin):
             'params': params,
         }
 
-        # rate limit: 180 requests per minute
-        seconds = 60/180
-        resp = self._request_retry(retry, seconds,
-                                   self.session.get, **kwargs)
+        resp = self._request_retry(retry=retry,
+                                   method=self.tag,
+                                   func=self.session.get,
+                                   **kwargs)
 
         return resp
 
@@ -334,10 +359,10 @@ class IotApi(mixin.Mixin):
             else:
                 kwargs['json'] = json
 
-        # rate limit: 180 requests per minute
-        seconds = 60/180
-        resp = self._request_retry(retry, seconds,
-                                   self.session.put, **kwargs)
+        resp = self._request_retry(retry=retry,
+                                   method=self.device_update,
+                                   func=self.session.put,
+                                   **kwargs)
 
         return resp
 
@@ -365,10 +390,10 @@ class IotApi(mixin.Mixin):
             else:
                 kwargs['json'] = json
 
-        # rate limit: 180 requests per minute
-        seconds = 60/180
-        resp = self._request_retry(retry, seconds,
-                                   self.session.put, **kwargs)
+        resp = self._request_retry(retry=retry,
+                                   method=self.vuln_update,
+                                   func=self.session.put,
+                                   **kwargs)
 
         return resp
 
@@ -399,9 +424,9 @@ class IotApi(mixin.Mixin):
             else:
                 kwargs['json'] = json
 
-        # rate limit: 180 requests per minute
-        seconds = 60/180
-        resp = self._request_retry(retry, seconds,
-                                   self.session.put, **kwargs)
+        resp = self._request_retry(retry=retry,
+                                   method=self.alert_update,
+                                   func=self.session.put,
+                                   **kwargs)
 
         return resp

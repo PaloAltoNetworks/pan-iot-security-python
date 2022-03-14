@@ -37,6 +37,23 @@ class _MixinShared:
             'X-Access-Key': access_key,
         }
 
+    def _method_attributes(self):
+        METHOD_ATTRIBUTES = [
+            (self.device, {'window': 60, 'rate_limit': 60}),
+            (self.device_details, {'window': 60, 'rate_limit': 180}),
+            (self.vulnerability, {'window': 60, 'rate_limit': 180}),
+            (self.alert, {'window': 60, 'rate_limit': 180}),
+            (self.tag, {'window': 60, 'rate_limit': 180}),
+            (self.device_update, {'window': 60, 'rate_limit': 180}),
+            (self.vuln_update, {'window': 60, 'rate_limit': 180}),
+            (self.alert_update, {'window': 60, 'rate_limit': 180}),
+        ]
+
+        for x in METHOD_ATTRIBUTES:
+            func, attrs = x
+            func.__func__.window = attrs['window']
+            func.__func__.rate_limit = attrs['rate_limit']
+
     def decode_jwt(self):
         def _pad(x):
             remainder = len(x) % 4
