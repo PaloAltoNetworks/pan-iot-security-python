@@ -20,7 +20,7 @@ import logging
 import re
 import sys
 
-__version__ = '0.0.0.dev0'
+__version__ = '0.0.0.dev1'
 
 _default_api_version = (4, 0)
 DEFAULT_API_VERSION = 'v%d.%d' % _default_api_version
