@@ -67,7 +67,7 @@ def IotApi(api_version=None, *args, **kwargs):
     else:
         r = re.search(r'^v?(\d+)\.(\d+)$', api_version)
         if r is None:
-            raise ApiError('Invalid api_version: %s' % api_version)
+            raise ArgsError('Invalid api_version: %s' % api_version)
         x = int(r.group(1)), int(r.group(2))
     _api_version = ApiVersion(*x)
     _log(DEBUG1, 'api_version: %s, 0x%06x',
