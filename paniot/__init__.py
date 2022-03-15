@@ -84,12 +84,12 @@ def IotApi(api_version=None, *args, **kwargs):
     try:
         __import__(module_name)
     except ImportError as e:
-        raise ApiError('Module import error: %s: %s' %
-                       (module_name, e))
+        raise ArgsError('Module import error: %s: %s' %
+                        (module_name, e))
 
     try:
         klass = getattr(sys.modules[module_name], class_)
     except AttributeError:
-        raise ApiError('Class not found: %s' % class_)
+        raise ArgsError('Class not found: %s' % class_)
 
     return klass(api_version=_api_version, *args, **kwargs)
