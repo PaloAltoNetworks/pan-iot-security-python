@@ -122,8 +122,8 @@ paniot.api Constants
  **DEFAULT_API_VERSION**
   Default API version.
 
-paniot.iotapi Constructor and Exception Class
----------------------------------------------
+paniot.iotapi Constructor
+-------------------------
 
 class paniot.iotapi.IotApi(\*, api_version=None, url=None, access_key_id=None, access_key=None, customerid=None, verify=None, timeout=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -191,12 +191,8 @@ class paniot.iotapi.IotApi(\*, api_version=None, url=None, access_key_id=None, a
   defaults to no timeout, meaning the timeouts are determined by the
   operating system TCP implementation.
 
-exception paniot.iotapi.ArgsError
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
- Exception raised by the IotApi class when an argument error occurs.
- This can include for example missing required arguments and invalid
- arguments.
+paniot.iotapi Exceptions
+------------------------
 
 exception paniot.iotapi.ApiError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -205,8 +201,20 @@ exception paniot.iotapi.ApiError
  can include for example an unexpected response document (JSON)
  format.
 
- The string representation of an instance of raised exceptions will
- contain a user-friendly error message.
+ All other exceptions are a subclass of ApiError, which can be
+ used to catch any exception raised by the IotApi class.
+
+exception paniot.iotapi.ArgsError
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ Exception raised by the IotApi class when an argument error occurs.
+ This can include for example missing required arguments and invalid
+ arguments.
+
+ ArgsError is a subclass of ApiError.
+
+The string representation of an instance of raised exceptions will
+contain a user-friendly error message.
 
 paniot.iotapi.IotApi Method Return Value
 ----------------------------------------
