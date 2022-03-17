@@ -721,7 +721,8 @@ def parse_opts():
         x = copy.deepcopy(options)
         if x['access-key'] is not None:
             x['access-key'] = '*' * 6
-        if x['config']['access-key'] is not None:
+        if ('access-key' in x['config'] and
+           x['config']['access-key'] is not None):
             x['config']['access-key'] = '*' * 6
         print(pprint.pformat(x), file=sys.stderr)
 
