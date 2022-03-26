@@ -39,11 +39,12 @@ SYNOPSIS
 
 
  async def iotapi():
+     path = '/etc/iot/keys/keys-acmecorp.json'
      try:
-         with open('/etc/iot/keys/keys-acmecorp.json', 'r') as f:
+         with open(path, 'r') as f:
              x = json.load(f)
      except (IOError, ValueError) as e:
-         print('%s: %s' % (arg, e), file=sys.stderr)
+         print('%s: %s' % (path, e), file=sys.stderr)
          sys.exit(1)
 
      kwargs = {
@@ -664,11 +665,12 @@ Sample Usage
 
 
  def iotapi():
+     path = '/etc/iot/keys/keys-acmecorp.json'
      try:
-         with open('/etc/iot/keys/keys-acmecorp.json', 'r') as f:
+         with open(path, 'r') as f:
              x = json.load(f)
      except (IOError, ValueError) as e:
-         print('%s: %s' % (arg, e), file=sys.stderr)
+         print('%s: %s' % (path, e), file=sys.stderr)
          sys.exit(1)
      kwargs = {
          'customerid': x['customerid'],
