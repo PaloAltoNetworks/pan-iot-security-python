@@ -77,7 +77,7 @@ DESCRIPTION
 ===========
 
  **iotapi.py** is used to perform IoT Security API requests.  It uses
- the IotApi class from the **paniot.api** module to execute API
+ the IotApi class from the **paniot** module to execute API
  requests.
 
  The IoT Security API can be used to:
@@ -354,7 +354,7 @@ DESCRIPTION
   group or other).
 
  ``--debug`` *level*
-  Enable debugging in **iotapi.py** and the **paniot.api** module.
+  Enable debugging in **iotapi.py** and the **paniot** module.
   *level* is an integer in the range 0-3; 0 specifies no
   debugging and 3 specifies maximum debugging.
 
