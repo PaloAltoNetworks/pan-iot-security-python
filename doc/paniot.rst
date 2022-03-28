@@ -13,9 +13,9 @@
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-==========
-paniot.api
-==========
+======
+paniot
+======
 
 -----------------------------------------------------------
 Python interface to the Palo Alto Networks IoT Security API
@@ -24,7 +24,7 @@ Python interface to the Palo Alto Networks IoT Security API
 NAME
 ====
 
- paniot.api - Python interface to the Palo Alto Networks IoT Security
+ paniot - Python interface to the Palo Alto Networks IoT Security
  API
 
 SYNOPSIS
@@ -67,7 +67,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
- The paniot.api module defines the IotApi class, which provides an
+ The paniot module defines the IotApi class, which provides an
  interface to the Palo Alto Networks IoT Security API.
 
  IotApi provides an interface to the following IoT Security API requests:
@@ -110,8 +110,8 @@ DESCRIPTION
  `requests module <https://docs.python-requests.org>`_
  is used for synchronous HTTP requests.
 
-paniot.api Constants
---------------------
+paniot Constants
+----------------
 
  **__version__**
   paniot package version string.
@@ -123,11 +123,11 @@ paniot.api Constants
  **DEFAULT_API_VERSION**
   Default API version.
 
-paniot.iotapi Constructor
--------------------------
+paniot Constructor
+------------------
 
-class paniot.iotapi.IotApi(\*, api_version=None, url=None, access_key_id=None, access_key=None, customerid=None, verify=None, timeout=None)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class paniot.IotApi(\*, api_version=None, url=None, access_key_id=None, access_key=None, customerid=None, verify=None, timeout=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  **api_version**
   API version is a string in the form v\ **major**.\ **minor** or
@@ -192,11 +192,11 @@ class paniot.iotapi.IotApi(\*, api_version=None, url=None, access_key_id=None, a
   defaults to no timeout, meaning the timeouts are determined by the
   operating system TCP implementation.
 
-paniot.iotapi Exceptions
-------------------------
+paniot Exceptions
+-----------------
 
-exception paniot.iotapi.ApiError
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+exception paniot.ApiError
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Exception raised by the IotApi class when an API error occurs.  This
  can include for example an unexpected response document (JSON)
@@ -205,8 +205,8 @@ exception paniot.iotapi.ApiError
  All other exceptions are a subclass of ApiError, which can be
  used to catch any exception raised by the IotApi class.
 
-exception paniot.iotapi.ArgsError
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+exception paniot.ArgsError
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Exception raised by the IotApi class when an argument error occurs.
  This can include for example missing required arguments and invalid
@@ -217,8 +217,8 @@ exception paniot.iotapi.ArgsError
 The string representation of an instance of raised exceptions will
 contain a user-friendly error message.
 
-paniot.iotapi.IotApi Method Return Value
-----------------------------------------
+paniot.IotApi Method Return Value
+---------------------------------
 
  IotApi class methods return the response object returned by the HTTP
  client library used for the request, or for generator functions, a
@@ -236,8 +236,8 @@ paniot.iotapi.IotApi Method Return Value
   and return a
   `Response object <https://docs.python-requests.org/en/latest/api/#requests.Response>`_.
 
-paniot.iotapi.IotApi Methods
-----------------------------
+paniot.IotApi Methods
+---------------------
 
 device(\*, stime=None, detail=False, offset=None, pagelength=None, query_string=None, retry=False)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -592,8 +592,8 @@ decode_jwt()
  The method returns a tuple containing the header and payload JSON
  objects as Python objects.
 
-paniot.iotapi.IotApi Method Attributes
---------------------------------------
+paniot.IotApi Method Attributes
+-------------------------------
 
  Methods that perform an API request store the API request rate limit
  and rate time window in method attributes:
@@ -621,8 +621,8 @@ paniot.iotapi.IotApi Method Attributes
  are made available as method attributes for use in custom retry
  strategies.
 
-paniot.iotapi.ApiVersion class Attributes and Methods
------------------------------------------------------
+paniot.ApiVersion class Attributes and Methods
+----------------------------------------------
 
  The ApiVersion class provides an interface to the API version of the
  IotApi class instance.
@@ -709,11 +709,11 @@ Debugging and Logging
   if options['debug']:
       logger = logging.getLogger()
       if options['debug'] == 3:
-          logger.setLevel(paniot.iotapi.DEBUG3)
+          logger.setLevel(paniot.DEBUG3)
       elif options['debug'] == 2:
-          logger.setLevel(paniot.iotapi.DEBUG2)
+          logger.setLevel(paniot.DEBUG2)
       elif options['debug'] == 1:
-          logger.setLevel(paniot.iotapi.DEBUG1)
+          logger.setLevel(paniot.DEBUG1)
 
       handler = logging.StreamHandler()
       logger.addHandler(handler)
