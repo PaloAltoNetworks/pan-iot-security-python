@@ -753,7 +753,8 @@ EXAMPLES
 SEE ALSO
 ========
 
- iotapy.py
+ iotapy.py command line program
+  https://github.com/PaloAltoNetworks/pan-iot-security-python/blob/main/doc/iotapi.rst
 
  IoT Security API Reference
   https://docs.paloaltonetworks.com/iot/iot-security-api-reference.html

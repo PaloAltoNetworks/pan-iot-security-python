@@ -527,7 +527,8 @@ EXAMPLES
 SEE ALSO
 ========
 
- paniot.api
+ paniot module
+  https://github.com/PaloAltoNetworks/pan-iot-security-python/blob/main/doc/paniot.rst
 
  IoT Security API Reference
   https://docs.paloaltonetworks.com/iot/iot-security-api-reference.html
