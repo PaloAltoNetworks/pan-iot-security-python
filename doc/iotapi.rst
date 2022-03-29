@@ -348,6 +348,7 @@ DESCRIPTION
   - ``access-key-id``
   - ``access-key``
   - ``customerid``
+  - ``verify``
 
   Because this file may contain the access key it should have strict
   file permissions (read/write for the owner and not accessible by
