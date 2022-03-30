@@ -42,10 +42,20 @@ To run all tests from the top-level directory:
 
   $ python3 -m unittest discover -v -s tests -t .
 
+To run a specific test from the top-level directory:
+::
+
+  $ python3 -m unittest discover -v -s tests -t . -p test_noaio_constructor.py
+
 To run all tests from the ``tests/`` directory:
 ::
 
   $ python3 -m unittest discover -v -s . -t ..
+
+To run a specific test from the ``tests/`` directory:
+::
+
+  $ python3 -m unittest discover -v -s . -t .. -p test_noaio_constructor.py
 
 asyncio and Normal Methods
 --------------------------
