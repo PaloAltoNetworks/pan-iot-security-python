@@ -14,7 +14,3 @@ class IotApiTest(mixin.Mixin, unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         x = resp.json()
         self.assertEqual(x['totalTags'], len(x['tags']))
-
-
-if __name__ == '__main__':
-    unittest.main()

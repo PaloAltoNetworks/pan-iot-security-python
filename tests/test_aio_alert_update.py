@@ -31,7 +31,3 @@ class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
         for x in tests:
             resp = await self.api.alert_update(id=id, json=x)
             self.assertEqual(resp.status, 404, x)
-
-
-if __name__ == '__main__':
-    unittest.main()

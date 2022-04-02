@@ -14,7 +14,3 @@ class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
         self.assertEqual(resp.status, 200)
         x = await resp.json()
         self.assertEqual(x['totalTags'], len(x['tags']))
-
-
-if __name__ == '__main__':
-    unittest.main()

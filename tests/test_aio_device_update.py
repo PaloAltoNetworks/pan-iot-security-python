@@ -20,7 +20,3 @@ class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
                 'instance.deviceidlist', msg)
         except KeyError as e:
             self.fail('KeyError %s: %s' % (e, msg))
-
-
-if __name__ == '__main__':
-    unittest.main()

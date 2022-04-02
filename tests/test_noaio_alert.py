@@ -43,7 +43,3 @@ class IotApiTest(mixin.Mixin, unittest.TestCase):
         msg += t
         self.assertEqual(x['total'], 0, msg)
         self.assertEqual(len(x['items']), 0, msg)
-
-
-if __name__ == '__main__':
-    unittest.main()
