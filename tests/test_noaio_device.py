@@ -71,7 +71,8 @@ class IotApiTest(mixin.Mixin, unittest.TestCase):
 
     def test_09(self):
         total = 0
-        for x in self.api.devices_all():
+        for ok, x in self.api.devices_all():
+            self.assertTrue(ok)
             total += 1
             if total > 1050:
                 break

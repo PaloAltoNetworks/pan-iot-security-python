@@ -22,12 +22,14 @@ class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(x['items']), 0)
 
         total_resolved = 0
-        async for x in self.api.alerts_all(
+        async for ok, x in self.api.alerts_all(
                 query_string={'resolved': 'yes'}):
+            self.assertTrue(ok)
             total_resolved += 1
         total_unresolved = 0
-        async for x in self.api.alerts_all(
+        async for ok, x in self.api.alerts_all(
                 query_string={'resolved': 'no'}):
+            self.assertTrue(ok)
             total_unresolved += 1
         self.assertEqual(total, total_resolved+total_unresolved,
                          'alert total != resolved+unresolved')

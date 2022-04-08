@@ -148,16 +148,16 @@ class IotApi(mixin.Mixin):
                 except KeyError as e:
                     raise ApiError('Malformed response, missing key %s' % e)
                 length = len(obj)
+                self._log(DEBUG2, 'length %d', length)
                 for x in obj:
-                    yield x
-            else:
-                resp.raise_for_status()
+                    yield True, x
 
-            self._log(DEBUG2, 'length %d', length)
-            if length < pagelength:
-                self._log(DEBUG1, 'total %d', offset+length)
-                return
-            offset += length
+                if length < pagelength:
+                    self._log(DEBUG1, 'total %d', offset+length)
+                    break
+                offset += length
+            else:
+                yield False, resp
 
     def devices_all(self, *,
                     stime=None,

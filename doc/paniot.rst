@@ -55,12 +55,15 @@ SYNOPSIS
 
      try:
          async with paniot.IotApi(**kwargs) as api:
-             async for x in api.devices_all():
-                 print(x)
+             async for ok, x in api.devices_all():
+	         if ok:
+                     print(x)
+                 else:
+                     raise paniot.ApiError('%s: %s' % (
+	                 x.status, x.reason))
      except (paniot.ApiError, paniot.ArgsError) as e:
          print('paniot.IotApi:', e, file=sys.stderr)
          sys.exit(1)
-
 
  asyncio.run(iotapi())
 
@@ -283,9 +286,19 @@ devices_all(\*, stime=None, detail=False, query_string=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The ``devices_all()`` method is a generator function which executes
- the ``device()`` method with a page length of 1000 and with retry
- enabled until all items are returned; each entry in the response
- ``items`` list is yielded.
+ the ``device()`` method with an offset starting at 0, a page length
+ of 1000, and with retry enabled until all items are returned.  The
+ generator function yields a tuple containing:
+
+  **status**: a boolean
+
+   - True: the HTTP status code of the request is 200
+   - False: the HTTP status code of the request is not 200
+
+  **response**: a response item, or HTTP client library response object
+
+   - **status** is True: an object in the response ``devices`` list
+   - **status** is False: HTTP client library response object
 
 device_details(\*, deviceid=None, ip=None, query_string=None, retry=False)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -392,9 +405,19 @@ vulnerabilities_all(\*, groupby=None, stime=None, query_string=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The ``vulnerabilities_all()`` method is a generator function which
- executes the ``vulnerability()`` method with a page length of 1000
- and with retry enabled until all items are returned; each entry in
- the response ``items`` list is yielded.
+ executes the ``vulnerability()`` method with an offset starting at 0,
+ a page length of 1000, and with retry enabled until all items are
+ returned.  The generator function yields a tuple containing:
+
+  **status**: a boolean
+
+   - True: the HTTP status code of the request is 200
+   - False: the HTTP status code of the request is not 200
+
+  **response**: a response item, or HTTP client library response object
+
+   - **status** is True: an object in the response ``items`` list
+   - **status** is False: HTTP client library response object
 
 alert(\*, stime=None, offset=None, pagelength=None, query_string=None, retry=False)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -437,9 +460,19 @@ alerts_all(\*, stime=None, query_string=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The ``alerts_all()`` method is a generator function which executes
- the ``alert()`` method with a page length of 1000 and with retry
- enabled until all items are returned; each entry in the response
- ``items`` list is yielded.
+ the ``alert()`` method with an offset starting at 0, a page length of
+ 1000, and with retry enabled until all items are returned.  The
+ generator function yields a tuple containing:
+
+  **status**: a boolean
+
+   - True: the HTTP status code of the request is 200
+   - False: the HTTP status code of the request is not 200
+
+  **response**: a response item, or HTTP client library response object
+
+   - **status** is True: an object in the response ``items`` list
+   - **status** is False: HTTP client library response object
 
 tag(\*, query_string=None, retry=False)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

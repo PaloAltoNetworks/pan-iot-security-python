@@ -339,8 +339,12 @@ def wrap_obj(options, func, **kwargs):
 
     wrap = True
     # XXX default to False with option to enable?
-    for x in func(**kwargs):
-        if wrap:
+    for ok, x in func(**kwargs):
+        if not ok:
+            print_status(func.__name__, x)
+            print_response(options, x)
+            x.raise_for_status()
+        elif wrap:
             obj['things'].append(x)
         else:
             print_json_response(options, x)
@@ -355,8 +359,12 @@ async def aiowrap_obj(options, func, **kwargs):
 
     wrap = True
     # XXX default to False with option to enable?
-    async for x in func(**kwargs):
-        if wrap:
+    async for ok, x in func(**kwargs):
+        if not ok:
+            print_status(func.__name__, x)
+            aioprint_response(options, x)
+            x.raise_for_status()
+        elif wrap:
             obj['things'].append(x)
         else:
             print_json_response(options, x)

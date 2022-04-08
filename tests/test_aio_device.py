@@ -71,7 +71,8 @@ class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
 
     async def test_09(self):
         total = 0
-        async for x in self.api.devices_all():
+        async for ok, x in self.api.devices_all():
+            self.assertTrue(ok)
             total += 1
             if total > 1050:
                 break
