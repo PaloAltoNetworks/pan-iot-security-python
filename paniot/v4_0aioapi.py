@@ -321,6 +321,8 @@ class IotApi(mixin.AioMixin):
             yield x
 
     async def tag(self, *,
+                  offset=None,
+                  pagelength=None,
                   query_string=None,
                   retry=False):
         path = BASE_PATH + '/tag/list'
@@ -330,6 +332,10 @@ class IotApi(mixin.AioMixin):
             'customerid': self.customerid,
             'source': 'tenant',
         }
+        if offset is not None:
+            params['offset'] = offset
+        if pagelength is not None:
+            params['pagelength'] = pagelength
         if query_string is not None:
             params.update(query_string)
 

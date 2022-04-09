@@ -474,11 +474,18 @@ alerts_all(\*, stime=None, query_string=None)
    - **status** is True: an object in the response ``items`` list
    - **status** is False: HTTP client library response object
 
-tag(\*, query_string=None, retry=False)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tag(\*, offset=None, pagelength=None, query_string=None, retry=False)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The ``tag()`` method performs the ``/tag/list`` API request to get
  all custom tags.
+
+ **offset**
+  Numeric offset used for response paging.  The default offset is 0.
+
+ **pagelength**
+  Numeric number of items to return in a response.  The default
+  page length is 1000.
 
  **query_string**
   Dictionary of key/value pairs to be sent as additional parameters in

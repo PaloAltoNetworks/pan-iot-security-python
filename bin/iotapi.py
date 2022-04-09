@@ -185,7 +185,10 @@ def request(api, options):
         wrap_obj(options, api.alerts_all, **kwargs)
 
     elif options['tag']:
-        resp = api.tag(query_string=options['query_string_obj'])
+        resp = api.tag(
+            offset=options['offset'],
+            pagelength=options['pagelength'],
+            query_string=options['query_string_obj'])
         print_status('tag', resp)
         print_response(options, resp)
         resp.raise_for_status()
@@ -301,7 +304,10 @@ async def aiorequest(api, options):
         await aiowrap_obj(options, api.alerts_all, **kwargs)
 
     elif options['tag']:
-        resp = await api.tag(query_string=options['query_string_obj'])
+        resp = await api.tag(
+            offset=options['offset'],
+            pagelength=options['pagelength'],
+            query_string=options['query_string_obj'])
         print_status('tag', resp)
         await aioprint_response(options, resp)
         resp.raise_for_status()
