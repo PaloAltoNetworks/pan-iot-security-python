@@ -362,7 +362,7 @@ async def aiowrap_obj(options, func, **kwargs):
     async for ok, x in func(**kwargs):
         if not ok:
             print_status(func.__name__, x)
-            aioprint_response(options, x)
+            await aioprint_response(options, x)
             x.raise_for_status()
         elif wrap:
             obj['things'].append(x)
