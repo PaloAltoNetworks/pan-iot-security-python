@@ -50,6 +50,8 @@ SYNOPSIS
     --alert                  get security alert API request
     --alerts                 get all security alerts
     --tag                    get tag API request
+    --profile                get profile mapping API request
+    --policy                 get policy recommendation API request
     --offset num             items offset
     --pagelength num         number of items to return
     --device-update          update device API request
@@ -88,6 +90,8 @@ DESCRIPTION
  - Get vulnerabilities
  - Get security alerts
  - Get tags
+ - Get device profile mappings
+ - Get policy rule recommendations
  - Update device tags
  - Update vulnerabilities
  - Update alerts
@@ -219,6 +223,14 @@ DESCRIPTION
 
  ``--tag``
   Perform the ``/tag/list`` API request to get all custom tags.
+
+ ``--profile``
+  Perform the ``/profile/mapping`` API request to get all device
+  profiles and the mapping to their category and vertical.
+
+ ``--policy``
+  Perform the ``/policy/recommendation`` API request to get policy
+  rule recommendations.
 
  ``--offset`` *num*
   Numeric offset used for response paging.  The default offset is 0.

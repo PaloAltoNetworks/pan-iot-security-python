@@ -352,6 +352,62 @@ class IotApi(mixin.AioMixin):
 
         return resp
 
+    async def profile(self, *,
+                      query_string=None,
+                      retry=False):
+        path = BASE_PATH + '/profile/mapping'
+        url = self.url + path
+
+        params = {
+            'customerid': self.customerid,
+        }
+        if query_string is not None:
+            params.update(query_string)
+
+        kwargs = {
+            'url': url,
+            'ssl': self.ssl,
+            'params': params,
+        }
+
+        resp = await self._request_retry(retry=retry,
+                                         method=self.tag,
+                                         func=self.session.get,
+                                         **kwargs)
+
+        return resp
+
+    async def policy(self, *,
+                     offset=None,
+                     pagelength=None,
+                     query_string=None,
+                     retry=False):
+        path = BASE_PATH + '/policy/recommendation'
+        url = self.url + path
+
+        params = {
+            'customerid': self.customerid,
+        }
+        if offset is not None:
+            params['offset'] = offset
+        if pagelength is not None:
+            params['pagelength'] = pagelength
+        if query_string is not None:
+            params.update(query_string)
+
+        kwargs = {
+            'url': url,
+            'ssl': self.ssl,
+            'params': params,
+        }
+
+        resp = await self._request_retry(retry=retry,
+                                         method=self.tag,
+                                         func=self.session.get,
+                                         **kwargs)
+
+        return resp
+
     async def device_update(self, *,
                             json=None,
                             query_string=None,

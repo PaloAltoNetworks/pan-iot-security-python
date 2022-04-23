@@ -84,6 +84,8 @@ DESCRIPTION
  Get vulnerabilities                vulnerability()         /pub/v4.0/vulnerability/list
  Get security alerts                alert()                 /pub/v4.0/alert/list
  Get tags                           tag()                   /pub/v4.0/tag/list
+ Get device profiles mappings       profile()               /pub/v4.0/profile/mappings
+ Get policy rule recommendations    policy()                /pub/v4.0/policy/recommendation
  Update device tags                 device_update()         /pub/v4.0/device/update
  Update vulnerability               vuln_update()           /pub/v4.0/vulnerability/update
  Update alert                       alert_update()          /pub/v4.0/alert/update
@@ -504,6 +506,64 @@ tag(\*, offset=None, pagelength=None, query_string=None, retry=False)
  are defined in the
  `API documentation
  <https://docs.paloaltonetworks.com/iot/iot-security-api-reference/iot-security-api/get-list-of-user-defined-tags.html>`__
+ for the request.
+
+profile(\*, query_string=None, retry=False)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ The ``profile()`` method performs the ``/profile/mapping`` API
+ request to get all device profiles and the mapping to their category
+ and vertical.
+
+ **query_string**
+  Dictionary of key/value pairs to be sent as additional parameters in
+  the query string of the request.  This can be used to specify API
+  request parameters not supported by the class method.
+
+ **retry**
+  Retry the request indefinitely when a request is rate limited.  When
+  a HTTP 429 status code is returned, the function will suspend
+  execution for a period dependent on the rate limit of the API
+  request, then retry the request.  Coroutine methods use
+  ``asyncio.sleep()`` to suspend and normal methods use
+  ``time.sleep()``.
+
+ Additional request parameters and response JSON object fields
+ are defined in the
+ `API documentation
+ <https://docs.paloaltonetworks.com/iot/iot-security-api-reference/iot-security-api/get-profile-mapping>`__
+ for the request.
+
+policy(\*, offset=None, pagelength=None, query_string=None, retry=False)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ The ``policy()`` method performs the ``/policy/recommendation`` API
+ request to get policy rule recommendations.
+
+ **offset**
+  Numeric offset used for response paging.  The default offset is 0.
+
+ **pagelength**
+  Numeric number of items to return in a response.  The default
+  page length is 1000.
+
+ **query_string**
+  Dictionary of key/value pairs to be sent as additional parameters in
+  the query string of the request.  This can be used to specify API
+  request parameters not supported by the class method.
+
+ **retry**
+  Retry the request indefinitely when a request is rate limited.  When
+  a HTTP 429 status code is returned, the function will suspend
+  execution for a period dependent on the rate limit of the API
+  request, then retry the request.  Coroutine methods use
+  ``asyncio.sleep()`` to suspend and normal methods use
+  ``time.sleep()``.
+
+ Additional request parameters and response JSON object fields
+ are defined in the
+ `API documentation
+ <https://docs.paloaltonetworks.com/iot/iot-security-api-reference/iot-security-api/get-active-policy-rule-recommendations>`__
  for the request.
 
 device_update(\*, json=None, query_string=None, retry=False)

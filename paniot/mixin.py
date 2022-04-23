@@ -44,6 +44,8 @@ class _MixinShared:
             (self.vulnerability, {'window': 60, 'rate_limit': 180}),
             (self.alert, {'window': 60, 'rate_limit': 180}),
             (self.tag, {'window': 60, 'rate_limit': 180}),
+            (self.profile, {'window': 60, 'rate_limit': 180}),
+            (self.policy, {'window': 60, 'rate_limit': 180}),
             (self.device_update, {'window': 60, 'rate_limit': 180}),
             (self.vuln_update, {'window': 60, 'rate_limit': 180}),
             (self.alert_update, {'window': 60, 'rate_limit': 180}),

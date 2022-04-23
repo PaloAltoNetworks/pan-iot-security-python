@@ -201,6 +201,22 @@ def request(api, options):
         print_response(options, resp)
         resp.raise_for_status()
 
+    elif options['profile']:
+        resp = api.profile(
+            query_string=options['query_string_obj'])
+        print_status('profile', resp)
+        print_response(options, resp)
+        resp.raise_for_status()
+
+    elif options['policy']:
+        resp = api.policy(
+            offset=options['offset'],
+            pagelength=options['pagelength'],
+            query_string=options['query_string_obj'])
+        print_status('policy', resp)
+        print_response(options, resp)
+        resp.raise_for_status()
+
     elif options['device-update']:
         resp = api.device_update(
             json=options['json_request_obj'],
@@ -317,6 +333,22 @@ async def aiorequest(api, options):
             pagelength=options['pagelength'],
             query_string=options['query_string_obj'])
         print_status('tag', resp)
+        await aioprint_response(options, resp)
+        resp.raise_for_status()
+
+    elif options['profile']:
+        resp = await api.profile(
+            query_string=options['query_string_obj'])
+        print_status('profile', resp)
+        await aioprint_response(options, resp)
+        resp.raise_for_status()
+
+    elif options['policy']:
+        resp = await api.policy(
+            offset=options['offset'],
+            pagelength=options['pagelength'],
+            query_string=options['query_string_obj'])
+        print_status('policy', resp)
         await aioprint_response(options, resp)
         resp.raise_for_status()
 
@@ -539,6 +571,8 @@ def parse_opts():
         'alert': False,
         'alerts': False,
         'tag': False,
+        'profile': False,
+        'policy': False,
         'offset': None,
         'pagelength': None,
         'device-update': False,
@@ -569,7 +603,7 @@ def parse_opts():
         'deviceid=', 'ip=',
         'vuln', 'groupby=', 'vulns',
         'alert', 'alerts',
-        'tag',
+        'tag', 'profile', 'policy',
         'offset=', 'pagelength=',
         'device-update', 'vuln-update', 'alert-update',
         'id=',
@@ -630,6 +664,10 @@ def parse_opts():
             options['alerts'] = True
         elif opt == '--tag':
             options['tag'] = True
+        elif opt == '--profile':
+            options['profile'] = True
+        elif opt == '--policy':
+            options['policy'] = True
         elif opt == '--offset':
             options['offset'] = arg
         elif opt == '--pagelength':
@@ -772,6 +810,8 @@ def usage():
     --alert                  get security alert API request
     --alerts                 get all security alerts
     --tag                    get tag API request
+    --profile                get profile mapping API request
+    --policy                 get policy recommendation API request
     --offset num             items offset
     --pagelength num         number of items to return
     --device-update          update device API request

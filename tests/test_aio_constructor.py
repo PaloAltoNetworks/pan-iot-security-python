@@ -71,6 +71,8 @@ class IotApiTest(unittest.IsolatedAsyncioTestCase):
                   self.api.vulnerability,
                   self.api.alert,
                   self.api.tag,
+                  self.api.profile,
+                  self.api.policy,
                   self.api.device_update,
                   self.api.vuln_update,
                   self.api.alert_update]:
