@@ -25,6 +25,7 @@ import logging
 import os
 import pprint
 import sys
+import traceback
 try:
     import jmespath
     have_jmespath = True
@@ -78,15 +79,24 @@ def main():
         sys.exit(0)
 
 
+def print_exception(exc, debug):
+    limit = 0
+    if debug == 1:
+        limit = -1
+    elif debug > 1:
+        limit = None
+    x = traceback.format_exception(None, exc, exc.__traceback__, limit=limit)
+    print(''.join(x), end='', file=sys.stderr)
+    sys.exit(1)
+
+
 def api_request(kwargs, options):
     try:
         with IotApi(**kwargs) as api:
             request(api, options)
 
     except Exception as e:
-        print('%s: %s' % (e.__class__.__name__, e),
-              file=sys.stderr)
-        sys.exit(1)
+        print_exception(e, options['debug'])
 
 
 async def aioapi_request(kwargs, options):
@@ -95,9 +105,7 @@ async def aioapi_request(kwargs, options):
             await aiorequest(api, options)
 
     except Exception as e:
-        print('%s: %s' % (e.__class__.__name__, e),
-              file=sys.stderr)
-        sys.exit(1)
+        print_exception(e, options['debug'])
 
 
 def request(api, options):
