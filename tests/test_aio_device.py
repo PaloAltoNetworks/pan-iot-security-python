@@ -38,6 +38,9 @@ class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
         x = await resp.json()
         self.assertEqual(x['total'], 1)
         self.assertEqual(len(x['devices']), 1)
+        key = 'number_of_caution_alerts'
+        self.assertNotIn(key, x['devices'][0],
+                         '%s key requires detail' % key)
 
         deviceid = x['devices'][0]['deviceid']
         ip = x['devices'][0]['ip_address']
@@ -56,6 +59,9 @@ class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
         self.assertEqual(resp.status, 200)
         x = await resp.json()
         self.assertEqual(x['total'], len(x['devices']))
+        key = 'number_of_caution_alerts'
+        self.assertIn(key, x['devices'][0],
+                      '%s key missing for detail' % key)
 
     async def test_08(self):
         d = datetime.now(tz=timezone.utc) + timedelta(seconds=10)
