@@ -10,6 +10,21 @@ class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
         self.assertEqual(resp.status, 400)
 
     async def test_02(self):
+        x = {'type': 'x-invalid'}
+        resp = await self.api.alert(query_string=x)
+        self.assertEqual(resp.status, 400)
+
+        x['type'] = 'policy_alert'
+        resp = await self.api.alert(query_string=x)
+        self.assertEqual(resp.status, 200)
+        await resp.json()
+
+    async def test_03(self):
+        x = {'resolved': 'x-invalid'}
+        resp = await self.api.alert(query_string=x)
+        self.assertEqual(resp.status, 400)
+
+    async def test_04(self):
         resp = await self.api.alert(pagelength=1)
         self.assertEqual(resp.status, 200)
         x = await resp.json()
@@ -34,7 +49,7 @@ class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
         self.assertEqual(total, total_resolved+total_unresolved,
                          'alert total != resolved+unresolved')
 
-    async def test_03(self):
+    async def test_05(self):
         d = datetime.now(tz=timezone.utc) + timedelta(seconds=10)
         stime = d.strftime('%Y-%m-%dT%H:%M:%SZ')
         resp = await self.api.alert(stime=stime)

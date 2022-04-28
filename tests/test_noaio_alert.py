@@ -10,6 +10,20 @@ class IotApiTest(mixin.Mixin, unittest.TestCase):
         self.assertEqual(resp.status_code, 400)
 
     def test_02(self):
+        x = {'type': 'x-invalid'}
+        resp = self.api.alert(query_string=x)
+        self.assertEqual(resp.status_code, 400)
+
+        x['type'] = 'policy_alert'
+        resp = self.api.alert(query_string=x)
+        self.assertEqual(resp.status_code, 200)
+
+    def test_03(self):
+        x = {'resolved': 'x-invalid'}
+        resp = self.api.alert(query_string=x)
+        self.assertEqual(resp.status_code, 400)
+
+    def test_04(self):
         resp = self.api.alert(pagelength=1)
         self.assertEqual(resp.status_code, 200)
         x = resp.json()
@@ -34,7 +48,7 @@ class IotApiTest(mixin.Mixin, unittest.TestCase):
         self.assertEqual(total, total_resolved+total_unresolved,
                          'alert total != resolved+unresolved')
 
-    def test_03(self):
+    def test_05(self):
         d = datetime.now(tz=timezone.utc) + timedelta(seconds=10)
         stime = d.strftime('%Y-%m-%dT%H:%M:%SZ')
         resp = self.api.alert(stime=stime)
