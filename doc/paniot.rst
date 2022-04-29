@@ -712,6 +712,8 @@ paniot.IotApi Method Attributes
  - vulnerability()
  - alert()
  - tag()
+ - profile()
+ - policy()
  - device_update()
  - vuln_update()
  - alert_update()
