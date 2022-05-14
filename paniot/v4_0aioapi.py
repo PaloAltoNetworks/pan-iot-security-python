@@ -408,6 +408,17 @@ class IotApi(mixin.AioMixin):
 
         return resp
 
+    async def policies_all(self, *,
+                           query_string=None):
+        kwargs = {
+            'query_string': query_string,
+        }
+
+        async for x in self._get_all(func=self.policy,
+                                     keys=['policies'],
+                                     **kwargs):
+            yield x
+
     async def device_update(self, *,
                             json=None,
                             query_string=None,

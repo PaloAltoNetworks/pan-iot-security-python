@@ -217,6 +217,13 @@ def request(api, options):
         print_response(options, resp)
         resp.raise_for_status()
 
+    elif options['policies']:
+        kwargs = {
+            'query_string': options['query_string_obj'],
+        }
+
+        wrap_obj(options, api.policies_all, **kwargs)
+
     elif options['device-update']:
         resp = api.device_update(
             json=options['json_request_obj'],
@@ -351,6 +358,13 @@ async def aiorequest(api, options):
         print_status('policy', resp)
         await aioprint_response(options, resp)
         resp.raise_for_status()
+
+    elif options['policies']:
+        kwargs = {
+            'query_string': options['query_string_obj'],
+        }
+
+        await aiowrap_obj(options, api.policies_all, **kwargs)
 
     elif options['device-update']:
         resp = await api.device_update(
@@ -573,6 +587,7 @@ def parse_opts():
         'tag': False,
         'profile': False,
         'policy': False,
+        'policies': False,
         'offset': None,
         'pagelength': None,
         'device-update': False,
@@ -603,7 +618,7 @@ def parse_opts():
         'deviceid=', 'ip=',
         'vuln', 'groupby=', 'vulns',
         'alert', 'alerts',
-        'tag', 'profile', 'policy',
+        'tag', 'profile', 'policy', 'policies',
         'offset=', 'pagelength=',
         'device-update', 'vuln-update', 'alert-update',
         'id=',
@@ -668,6 +683,8 @@ def parse_opts():
             options['profile'] = True
         elif opt == '--policy':
             options['policy'] = True
+        elif opt == '--policies':
+            options['policies'] = True
         elif opt == '--offset':
             options['offset'] = arg
         elif opt == '--pagelength':
@@ -812,6 +829,7 @@ def usage():
     --tag                    get tag API request
     --profile                get profile mapping API request
     --policy                 get policy recommendation API request
+    --policies               get all policies
     --offset num             items offset
     --pagelength num         number of items to return
     --device-update          update device API request

@@ -102,6 +102,7 @@ DESCRIPTION
  devices_all()               /pub/v4.0/device/list
  vulnerabilities_all()       /pub/v4.0/vulnerability/list
  alerts_all()                /pub/v4.0/alert/list
+ policies_all()              /pub/v4.0/policy/recommendation
  =========================   ================================
 
  IotApi methods are implemented as both functions, and coroutines for
@@ -565,6 +566,24 @@ policy(\*, offset=None, pagelength=None, query_string=None, retry=False)
  `API documentation
  <https://docs.paloaltonetworks.com/iot/iot-security-api-reference/iot-security-api/get-active-policy-rule-recommendations>`__
  for the request.
+
+policies_all(\*, query_string=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ The ``policies_all()`` method is a generator function which executes
+ the ``policy()`` method with an offset starting at 0, a page length of
+ 1000, and with retry enabled until all items are returned.  The
+ generator function yields a tuple containing:
+
+  **status**: a boolean
+
+   - True: the HTTP status code of the request is 200
+   - False: the HTTP status code of the request is not 200
+
+  **response**: a response item, or HTTP client library response object
+
+   - **status** is True: an object in the response ``policies`` list
+   - **status** is False: HTTP client library response object
 
 device_update(\*, json=None, query_string=None, retry=False)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -52,6 +52,7 @@ SYNOPSIS
     --tag                    get tag API request
     --profile                get profile mapping API request
     --policy                 get policy recommendation API request
+    --policies               get all policies
     --offset num             items offset
     --pagelength num         number of items to return
     --device-update          update device API request
@@ -238,6 +239,14 @@ DESCRIPTION
  ``--pagelength`` *num*
   Numeric number of items to return in a response.  The default
   page length is 1000.
+
+ ``--policies``
+  Get all policies.  This uses the IotApi ``policies_all()`` method
+  which performs the ``/policy/recommendation`` API request until all
+  items are returned.
+
+  The resulting object contains a *things* name, and the value is an
+  array of policy objects.
 
  ``--device-update``
   Perform the ``/device/update`` API request to update tags assigned
