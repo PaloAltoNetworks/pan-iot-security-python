@@ -3,10 +3,12 @@ import unittest
 from . import mixin
 
 
-# XXX offset, pagelength
-
 class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
     async def test_01(self):
+        resp = await self.api.policy(pagelength=0)
+        self.assertEqual(resp.status, 400)
+
+    async def test_02(self):
         x = {'profile': 'x-invalid'}
         resp = await self.api.policy(query_string=x)
         self.assertEqual(resp.status, 200)
@@ -14,12 +16,12 @@ class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
         self.assertEqual(x['total'], 0)
         self.assertEqual(len(x['policies']), 0)
 
-    async def test_02(self):
+    async def test_03(self):
         resp = await self.api.policy()
         self.assertEqual(resp.status, 200)
         x = await resp.json()
         self.assertGreaterEqual(x['total'], 0)
-        self.assertEqual(len(x['policies']), x['total'])
+        self.assertGreaterEqual(len(x['policies']), x['total'])
 
         if len(x['policies']) > 0:
             query_string = {
@@ -38,3 +40,28 @@ class IotApiTest(mixin.AioMixin, unittest.IsolatedAsyncioTestCase):
             x = await resp.json()
             self.assertEqual(x['total'], total)
             self.assertEqual(len(x['policies']), total)
+
+            resp = await self.api.policy(pagelength=1)
+            self.assertEqual(resp.status, 200)
+            x = await resp.json()
+            self.assertEqual(len(x['policies']), 1)
+
+    async def test_04(self):
+        resp = await self.api.policy()
+        self.assertEqual(resp.status, 200)
+        x = await resp.json()
+        total = x['total']
+        if total > 0:
+            resp = await self.api.policy(offset=total)
+            self.assertEqual(resp.status, 200)
+            x = await resp.json()
+            self.assertEqual(x['total'], total)
+            self.assertEqual(len(x['policies']), 0)
+
+    async def test_05(self):
+        total = 0
+        async for ok, x in self.api.policies_all():
+            self.assertTrue(ok)
+            total += 1
+            if total > 1050:
+                break
