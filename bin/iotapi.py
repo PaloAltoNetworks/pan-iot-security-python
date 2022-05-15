@@ -392,7 +392,33 @@ async def aiorequest(api, options):
         resp.raise_for_status()
 
 
+class GeneratorList(list):
+    def __init__(self, generator, **kwargs):
+        self.name = generator.__name__
+        self.generator = generator(**kwargs)
+
+    def __iter__(self):
+        for ok, x in self.generator:
+            if ok:
+                yield x
+            else:
+                raise ApiError('%s: %s %s: %s' % (
+                    self.name, x.status_code, x.reason, x.text))
+
+    def __len__(self):
+        # ensure list is true
+        return 1
+
+
 def wrap_obj(options, func, **kwargs):
+    if options['opt_json']:
+        # only allowed with noaio
+        bigobj = GeneratorList(generator=func, **kwargs)
+        for x in json.JSONEncoder().iterencode(bigobj):
+            print(x, end='')
+
+        return
+
     obj = {
         'things': []
     }
@@ -602,14 +628,15 @@ def parse_opts():
         'aio': True,
         'print_json': False,
         'print_python': False,
-        'print_jwt': False,
         'jmespath': None,
+        'opt_json': False,
+        'print_jwt': False,
         'timeout': None,
         'debug': 0,
         'dtime': False,
         }
 
-    short_options = 'F:J:jpQ:R:'
+    short_options = 'F:J:jOpQ:R:'
     long_options = [
         'help', 'version', 'debug=', 'dtime',
         'api-version=', 'url=',
@@ -725,6 +752,8 @@ def parse_opts():
                       file=sys.stderr)
                 sys.exit(1)
             options['jmespath'] = arg
+        elif opt == '-O':
+            options['opt_json'] = True
         elif opt == '--jwt':
             options['print_jwt'] = True
         elif opt == '--debug':
@@ -748,6 +777,10 @@ def parse_opts():
             sys.exit(0)
         else:
             assert False, 'unhandled option %s' % opt
+
+    if options['opt_json'] and options['aio']:
+        print('Must use --noaio with -O', file=sys.stderr)
+        sys.exit(0)
 
     for x in ['api-version', 'url',
               'access-key-id', 'access-key', 'customerid']:
@@ -845,6 +878,7 @@ def usage():
     -j                       print JSON
     -p                       print Python
     -J expression            JMESPath expression for JSON response data
+    -O                       optimized get all with JSON only output
     --jwt                    print header, payload from JWT (access key)
     --timeout timeout        connect, read timeout
     -F path                  JSON options (multiple -F's allowed)

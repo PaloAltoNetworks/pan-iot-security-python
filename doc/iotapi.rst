@@ -68,6 +68,7 @@ SYNOPSIS
     -j                       print JSON
     -p                       print Python
     -J expression            JMESPath expression for JSON response data
+    -O                       optimized get all with JSON only output
     --jwt                    print header, payload from JWT (access key)
     --timeout timeout        connect, read timeout
     -F path                  JSON options (multiple -F's allowed)
@@ -333,6 +334,20 @@ DESCRIPTION
   <https://jmespath.org/>`_ to evaluate on the response JSON object.
   This requires the `jmespath package
   <https://pypi.org/project/jmespath/>`_.
+
+ ``-O``
+  This is an optimised version of ``-j`` for the get all methods,
+  which does not place all the results in memory. The API response
+  items are encoded to a JSON array and written to *stdout* as they
+  are returned by the ``*_all()`` generator functions.
+
+  The print Python option (**-p**) and JMSEPath expression option
+  (**-J**) are ignored for ``-O``.
+
+  ``-O`` requires ``--noaio`` due to complications using the
+  `json.JSONEncoder
+  <https://docs.python.org/3/library/json.html#json.JSONEncoder>`_
+  class with an asynchronous generator.
 
  ``--jwt``
   Decode the access key, which is a JSON Web Token (JWT), and print
