@@ -266,7 +266,7 @@ DESCRIPTION
 
  ``-R`` *json*
   Specify a JSON object to use as the body of the POST request.
-  Multiple instances of the option is allowed.  The API requests
+  Multiple instances of the option are allowed.  The API requests
   that use POST are:
 
   ========================  ===================  =================
@@ -284,7 +284,7 @@ DESCRIPTION
   Specify a JSON object to modify the query string used in the
   request.  This can be used to specify request parameters that are
   not supported by a class method or the command line interface.
-  Multiple instances of the option is allowed.
+  Multiple instances of the option are allowed.
 
   *json* can be a string, a path to a file containing a JSON object,
   or the value **-** to specify a JSON object is on *stdin*.
