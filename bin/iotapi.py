@@ -487,9 +487,8 @@ def print_status(name, resp):
 
 
 def print_response(options, resp):
-    content_type = resp.headers.get('content-type')
-    if (content_type is not None and
-       content_type.startswith('application/json')):
+    content_type = resp.headers.get('content-type', '').lower()
+    if content_type.startswith('application/json'):
         x = resp.json()
         print_json_response(options, x)
     else:
@@ -497,7 +496,8 @@ def print_response(options, resp):
 
 
 async def aioprint_response(options, resp):
-    if resp.content_type == 'application/json':
+    content_type = resp.headers.get('content-type', '').lower()
+    if content_type.startswith('application/json'):
         x = await resp.json()
         print_json_response(options, x)
     else:
