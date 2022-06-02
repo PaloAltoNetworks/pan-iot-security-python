@@ -220,8 +220,8 @@ exception paniot.ArgsError
 
  ArgsError is a subclass of ApiError.
 
-The string representation of an instance of raised exceptions will
-contain a user-friendly error message.
+ The string representation of an instance of raised exceptions will
+ contain a user-friendly error message.
 
 paniot.IotApi Method Return Value
 ---------------------------------
@@ -842,7 +842,7 @@ Debugging and Logging
 EXAMPLES
 ========
 
- The **iotapy.py** command line program calls each available IotApi
+ The **iotapi.py** command line program calls each available IotApi
  method, with and without ``async/await``, and can be reviewed for
  sample usage of the class and its methods.
  ::
@@ -874,7 +874,7 @@ EXAMPLES
 SEE ALSO
 ========
 
- iotapy.py command line program
+ iotapi.py command line program
   https://github.com/PaloAltoNetworks/pan-iot-security-python/blob/main/doc/iotapi.rst
 
  IoT Security API Reference
