@@ -69,6 +69,10 @@ SYNOPSIS
     -p                       print Python
     -J expression            JMESPath expression for JSON response data
     -O                       optimized get all with JSON only output
+    --panos set|xml          convert IoT objects to PAN-OS Device-ID objects
+    --panos-filter json      fields to use in PAN-OS Device-ID object
+    --dedup                  deduplicate PAN-OS Device-ID objects (default)
+    --nodedup                do not deduplicate PAN-OS Device-ID objects
     --jwt                    print header, payload from JWT (access key)
     --timeout timeout        connect, read timeout
     -F path                  JSON options (multiple -F's allowed)
@@ -349,14 +353,76 @@ DESCRIPTION
   <https://docs.python.org/3/library/json.html#json.JSONEncoder>`_
   class with an asynchronous generator.
 
- ``--jwt``
+
+ ``--panos`` *format*
+  Create PAN-OS Device-ID objects using metadata in IoT device and
+  device profile objects.  The PAN-OS Device-ID objects can be
+  added to firewalls and Panorama and used in policy rules.
+
+  *format* can be:
+
+   **set** - output configuration mode set CLI statements
+
+   **xml** - output a PAN-OS XML API document
+
+  The object name is constructed using the
+  `BLAKE2 hash function
+  <https://www.blake2.net/>`_
+  with a digest size of 15 bytes which results in a 30 byte hexadecimal
+  string (the maximum Device-ID object name length is 31).  The digest
+  input message is a sorted list of the key/value items in the object.
+
+  PAN-OS has a limit of 1,000 Device-ID objects.
+
+ ``--panos-filter`` *json*
+  Specify a JSON array containing the PAN-OS Device-ID fields to
+  include in the objects.  A Device-ID object contains six attributes
+  which can be used to classify a device:
+
+  ===========  ======================   ==================
+  Attribute    PAN-OS Device-ID Field   IoT Security Field
+  ===========  ======================   ==================
+  Category     category                 category
+  Profile      profile                  profile
+  Vendor       vendor                   vendor
+  Model        model                    model
+  OS Version   os                       os_combined
+  OS Family    osfamily                 os_group
+  ===========  ======================   ==================
+
+  The default filter contains all PAN-OS Device-ID fields:
+
+   ``["category","profile","vendor","model","os","osfamily"]``
+
+  *json* can be a string, a path to a file containing a JSON array,
+  or the value **-** to specify a JSON array is on *stdin*.
+
+  An IoT device object may contain all attributes; an IoT device
+  profile object contains the *Category* and *Profile* attributes.
+
+ ``--dedup``
+  Deduplicate the Device-ID objects.  Only a single object with a unique
+  set of fields will be output.
+
+  This is the default.
+
+ ``--nodedup``
+  Do not deduplicate the Device-ID objects.
+
+  This requires the hash function input message to be unique so it
+  will produce a unique Device-ID object name.  For device objects the
+  **deviceid** IoT field is used as the **description**, and for
+  profile objects the **vertical** field is used as the
+  **description**.
+
+  ``--jwt``
   Decode the access key, which is a JSON Web Token (JWT), and print
   the header and payload JSON objects.
 
  ``--timeout`` *timeout*
   Set client HTTP timeout values in seconds.
 
-  **timeout** can be:
+  *timeout* can be:
 
    a single value to set the total timeout (aiohttp) or the
    **connect** and **read** timeouts to the same value (requests)
@@ -560,6 +626,22 @@ EXAMPLES
   > --id 61de59cf49bd6a08000b6a1e -R alert-update.json
   alert-update: 200 OK None
 
+ Create PAN-OS Device-ID objects for vertical *Consumer IoT* using
+ *category* and add then to a firewall using the PAN-OS XML API:
+ ::
+
+  $ iotapi.py -F ~/.keys/keys-acmecorp.json --debug 1 --profile \
+  > -J "mapping[?vertical=='Consumer IoT']" \
+  > --panos-filter '["category"]' --panos xml >X.xml
+  Using selector: KqueueSelector
+  api_version: v4.0, 0x040000
+  GET https://acmecorp.iot.paloaltonetworks.com/pub/v4.0/profile/mapping?customerid=acmecorp 200 OK None
+  profile: 200 OK None
+  closing aiohttp session
+
+  $ panxapi.py -t pa-220 -S X.xml "/config/devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']"
+  set: success [code="20"]: "command succeeded"
+
 SEE ALSO
 ========
 
@@ -571,6 +653,9 @@ SEE ALSO
 
  JMESPath query language for JSON
   https://jmespath.org/
+
+ panxapi.py
+  https://github.com/kevinsteves/pan-python/blob/master/doc/panxapi.rst
 
 AUTHORS
 =======

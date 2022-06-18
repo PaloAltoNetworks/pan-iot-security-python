@@ -26,6 +26,8 @@ import os
 import pprint
 import sys
 import traceback
+from xml.dom import minidom
+import xml.etree.ElementTree as etree
 try:
     import jmespath
     have_jmespath = True
@@ -36,7 +38,8 @@ libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir)]
 
 
-from paniot import (IotApi, ArgsError, DEBUG1, DEBUG2, DEBUG3,
+from paniot import (IotApi, ArgsError, panos_device_objects,
+                    DEBUG1, DEBUG2, DEBUG3,
                     DEFAULT_API_VERSION, __version__)
 
 INDENT = 4
@@ -513,6 +516,43 @@ def print_json_response(options, x):
                   file=sys.stderr)
             sys.exit(1)
 
+    if options['panos'] and (options['device'] or
+                             options['devices'] or
+                             options['profile']):
+        if 'devices' in x:
+            x = x['devices']
+        elif 'things' in x:
+            x = x['things']
+        elif 'mapping' in x:
+            x = x['mapping']
+        elif isinstance(x, dict):
+            # single device by deviceid
+            x = [x]
+        elif isinstance(x, list):
+            pass
+        else:
+            assert False, 'unknown type: %s' % type(x)
+
+        devices = panos_device_objects(
+            data=x,
+            format=options['panos'],
+            filter=options['panos_filter_obj'],
+            dedup=options['dedup'])
+        for device in devices:
+            if isinstance(device, str):
+                print(device)
+            elif isinstance(device, etree.Element):
+                document = etree.tostring(device, encoding='UTF-8')
+                dom = minidom.parseString(document.decode('UTF-8'))
+                document = dom.toprettyxml(indent=' ' * 2)  # PAN-OS indent
+                if document.startswith('<?xml version="1.0" ?>\n'):
+                    start = document.find('\n') + 1
+                    print(document[start:], end='')
+                else:
+                    print(document, end='')
+            else:
+                assert False, 'unknown type: %s' % type(device)
+
     if options['print_python']:
         print(pprint.pformat(x))
 
@@ -580,6 +620,25 @@ def process_time(x):
         return d.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
+def process_json(lst):
+    obj = {}
+    for r in lst:
+        try:
+            x = json.loads(r)
+        except ValueError as e:
+            print('%s: %s' % (e, r), file=sys.stderr)
+            sys.exit(1)
+        obj.update(x)
+
+        try:
+            _ = json.dumps(obj)
+        except ValueError as e:
+            print(e, file=sys.stderr)
+            sys.exit(1)
+
+    return obj
+
+
 def parse_opts():
     def opt_verify(x):
         if x == 'yes':
@@ -630,6 +689,10 @@ def parse_opts():
         'print_python': False,
         'jmespath': None,
         'opt_json': False,
+        'panos': None,
+        'panos_filter': None,
+        'panos_filter_obj': None,
+        'dedup': True,
         'print_jwt': False,
         'timeout': None,
         'debug': 0,
@@ -650,6 +713,7 @@ def parse_opts():
         'device-update', 'vuln-update', 'alert-update',
         'id=',
         'verify=', 'aio', 'noaio',
+        'panos=', 'panos-filter=', 'dedup', 'nodedup',
         'jwt', 'timeout=',
     ]
 
@@ -746,6 +810,14 @@ def parse_opts():
             options['print_json'] = True
         elif opt == '-p':
             options['print_python'] = True
+        elif opt == '--panos':
+            options['panos'] = arg
+        elif opt == '--panos-filter':
+            options['panos_filter'] = process_arg(arg)
+        elif opt == '--dedup':
+            options['dedup'] = True
+        elif opt == '--nodedup':
+            options['dedup'] = False
         elif opt == '-J':
             if not have_jmespath:
                 print('Install JMESPath for -J support: http://jmespath.org/',
@@ -792,40 +864,24 @@ def parse_opts():
         options['verify'] = True
 
     if options['json_requests']:
-        obj = {}
-        for r in options['json_requests']:
-            try:
-                x = json.loads(r)
-            except ValueError as e:
-                print('%s: %s' % (e, r), file=sys.stderr)
-                sys.exit(1)
-            obj.update(x)
-
-        try:
-            _ = json.dumps(obj)
-        except ValueError as e:
-            print(e, file=sys.stderr)
-            sys.exit(1)
-
-        options['json_request_obj'] = obj
+        options['json_request_obj'] = process_json(options['json_requests'])
 
     if options['query_strings']:
-        obj = {}
-        for r in options['query_strings']:
-            try:
-                x = json.loads(r)
-            except ValueError as e:
-                print('%s: %s' % (e, r), file=sys.stderr)
-                sys.exit(1)
-            obj.update(x)
+        options['query_string_obj'] = process_json(options['query_strings'])
 
+    if (options['panos'] is not None and not options['debug'] and
+       options['panos'] not in ['xml', 'set']):
+        print('--panos must be xml or set', file=sys.stderr)
+        sys.exit(1)
+
+    if options['panos_filter'] is not None:
+        s = options['panos_filter']
         try:
-            _ = json.dumps(obj)
+            x = json.loads(s)
         except ValueError as e:
-            print(e, file=sys.stderr)
+            print('%s: %s' % (e, s), file=sys.stderr)
             sys.exit(1)
-
-        options['query_string_obj'] = obj
+        options['panos_filter_obj'] = x
 
     if options['debug'] > 2:
         x = copy.deepcopy(options)
@@ -879,6 +935,10 @@ def usage():
     -p                       print Python
     -J expression            JMESPath expression for JSON response data
     -O                       optimized get all with JSON only output
+    --panos set|xml          convert IoT objects to PAN-OS Device-ID objects
+    --panos-filter json      fields to use in PAN-OS Device-ID object
+    --dedup                  deduplicate PAN-OS Device-ID objects (default)
+    --nodedup                do not deduplicate PAN-OS Device-ID objects
     --jwt                    print header, payload from JWT (access key)
     --timeout timeout        connect, read timeout
     -F path                  JSON options (multiple -F's allowed)

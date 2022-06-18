@@ -16,9 +16,11 @@
 
 import asyncio
 from collections import namedtuple
+from hashlib import blake2b
 import logging
 import re
 import sys
+import xml.etree.ElementTree as etree
 
 __version__ = '0.3.0'
 
@@ -39,6 +41,150 @@ class ApiError(Exception):
 
 class ArgsError(ApiError):
     pass
+
+
+def panos_device_objects(*,
+                         data=None,
+                         format=None,
+                         filter=None,
+                         min_confidence=50,
+                         dedup=True):
+    def _name(x):
+        data = str(sorted(x.items()))
+        h = blake2b(data.encode(),
+                    digest_size=15)
+        return h.hexdigest()
+
+    def normalize(x):
+        # PAN-OS device dictionary does not allow & in fields and
+        # normalizes to ' and '.
+        for s in [' & ', ' &', '& ', '&']:
+            x = x.replace(s, ' and ')
+        return x
+
+    keymap = {
+        # IoT security  PAN-OS device-object
+        'os_combined': 'os',
+        'os_group':    'osfamily',
+        'category':    'category',
+        'profile':     'profile',
+        'model':       'model',
+        'vendor':      'vendor',
+    }
+
+    if format not in ['set', 'xml', 'xml2', 'xml3']:
+        raise ArgsError('invalid format: "%s"' % format)
+
+    if filter is not None and filter:
+        if not isinstance(filter, list):
+            raise ArgsError('filter not list')
+        for x in filter:
+            if x not in keymap.values():
+                raise ArgsError('invalid filter item: "%s"' % x)
+        new = {}
+        for k, v in keymap.items():
+            if v in filter:
+                new[k] = keymap[k]
+        if not new:
+            raise ArgsError('all keys filtered')
+        keymap = new
+
+    panos_objects = []
+    if data is None:
+        return panos_objects
+    if not isinstance(data, list):
+        raise ArgsError('data not list')
+
+    for obj in data:
+        if not isinstance(obj, dict):
+            raise ArgsError('data item not dict')
+
+        # Skip object when confidence score not > 50; the PAN-OS
+        # device dictionary doesn't store these profiles.
+        if ('confidence_score' in obj and
+           not obj['confidence_score'] > min_confidence):
+            continue
+
+        x = {}
+        for key in keymap:
+            if key in obj and obj[key]:
+                # Skip os_combined with no version; the PAN-OS device
+                # dictionary doesn't store these.
+                if (key == 'os_combined' and
+                    ('os/firmware_version' not in obj or
+                     not obj['os/firmware_version'])):
+                    continue
+                x[keymap[key]] = normalize(obj[key])
+
+        if x:
+            if 'vertical' in obj:
+                x['description'] = obj['vertical']
+            if not dedup and 'deviceid' in obj:
+                x['description'] = obj['deviceid']
+            panos_objects.append(x)
+
+    if dedup:
+        new = []
+        for i in range(len(panos_objects)):
+            if panos_objects[i] not in panos_objects[i+1:]:
+                new.append(panos_objects[i])
+        panos_objects = new
+
+    if format == 'set':
+        prefix = 'set device-object %s %s "%s"'
+        objects_set = []
+        for obj in panos_objects:
+            x = []
+            name = _name(obj)
+            for key in obj:
+                x.append(prefix % (name, key, obj[key]))
+            objects_set.append('\n'.join(x))
+
+        return objects_set
+
+    if format == 'xml':
+        root = etree.Element('device-object')
+        for obj in panos_objects:
+            name = _name(obj)
+            entry = etree.SubElement(root, 'entry',
+                                     {'name': name})
+            for key in obj:
+                member = etree.SubElement(entry, key)
+                if key == 'description':
+                    member.text = obj[key]
+                else:
+                    etree.SubElement(member, 'member').text = obj[key]
+
+        return [root]
+
+    if format in ['xml2', 'xml3']:  # XXX
+        # action=multi-config document
+        if format == 'xml2':
+            # firewall
+            xpath = ("/config/devices/entry[@name='localhost.localdomain']"
+                     "/vsys/entry[@name='vsys1']/device-object")
+        elif format == 'xml3':
+            # Panorama
+            xpath = '/config/shared/device-object'
+
+        id = 0
+        root = etree.Element('multi-config')
+        for obj in panos_objects:
+            id += 1
+            action = etree.SubElement(root, 'set',
+                                      {'id': str(id),
+                                       'xpath': xpath})
+            name = _name(obj)
+            entry = etree.SubElement(action, 'entry',
+                                     {'name': name})
+            for key in obj:
+                member = etree.SubElement(entry, key)
+                if key == 'description':
+                    member.text = obj[key]
+                else:
+                    etree.SubElement(member, 'member').text = obj[key]
+
+        return [root]
 
 
 class ApiVersion(namedtuple('api_version',
