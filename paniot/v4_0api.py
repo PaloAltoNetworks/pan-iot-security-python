@@ -153,7 +153,7 @@ class IotApi(mixin.Mixin):
                     yield True, x
 
                 if length < pagelength:
-                    self._log(DEBUG1, 'total %d', offset+length)
+                    self._log(DEBUG1, 'total %d', offset + length)
                     break
                 offset += length
             else:

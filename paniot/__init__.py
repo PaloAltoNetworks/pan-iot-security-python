@@ -126,7 +126,7 @@ def panos_device_objects(*,
     if dedup:
         new = []
         for i in range(len(panos_objects)):
-            if panos_objects[i] not in panos_objects[i+1:]:
+            if panos_objects[i] not in panos_objects[i + 1:]:
                 new.append(panos_objects[i])
         panos_objects = new
 
